@@ -11,9 +11,7 @@ fn handle_request(connection: net.Server.Connection, _: std.mem.Allocator) !void
 
     // let's reuse the same connection stream.
     // this can only accept one connection, but it doesn't matter yet.
-    while (true) {
-        try writer.writeAll("+PONG\r\n");
-    }
+    try writer.writeAll("+PONG\r\n");
 }
 
 pub fn main() !void {
