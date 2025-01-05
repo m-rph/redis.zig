@@ -16,3 +16,8 @@ pub fn info(comptime format: []const u8, args: anytype) !void {
     const stderr = io.getStdErr();
     try print_with_prefix(stderr, "[INFO] ", format, args);
 }
+
+pub fn trace(comptime format: []const u8, args: anytype) !void {
+    const stderr = io.getStdErr();
+    try print_with_prefix(stderr, "[TRACE] ", format, args);
+}
