@@ -1,25 +1,22 @@
 const std = @import("std");
 const net = std.net;
+const address = "127.0.0.1";
+const port = 6379;
 
 pub fn main() !void {
     const stdout = std.io.getStdOut().writer();
+    try stdout.print("Logs from your program will appear here!\n", .{});
+    try stdout.print("listening to {s}:{d}\n", .{ address, port });
 
-    // You can use print statements as follows for debugging, they'll be visible when running tests.
-    try stdout.print("Logs from your program will appear here!", .{});
+    const address_and_port = try net.Address.resolveIp(address, 6379);
 
-    // Uncomment this block to pass the first stage
-    //
-    // const address = try net.Address.resolveIp("127.0.0.1", 6379);
-    //
-    // var listener = try address.listen(.{
-    //     .reuse_address = true,
-    // });
-    // defer listener.deinit();
-    //
-    // while (true) {
-    //     const connection = try listener.accept();
-    //
-    //     try stdout.print("accepted new connection", .{});
-    //     connection.stream.close();
-    // }
+    var listener = try address_and_port.listen(.{
+        .reuse_address = true,
+    });
+    defer listener.deinit();
+    while (true) {
+        const connection = try listener.accept();
+        defer connection.stream.close();
+        try stdout.print("accepted new connection\n", .{});
+    }
 }
