@@ -26,18 +26,18 @@ fn handle_request(connection: net.Server.Connection, allocator: std.mem.Allocato
     }
 }
 
+fn event_loop() !void {}
+
 pub fn main() !void {
-    const stdout = std.io.getStdOut().writer();
     const allocator = std.heap.page_allocator;
+    try logging.debug("listening to {s}:{d}\n", .{ address, port });
+    const socket = try net.Address.resolveIp(address, 6379);
 
-    try stdout.print("Logs from your program will appear here!\n", .{});
-    try stdout.print("listening to {s}:{d}\n", .{ address, port });
-
-    const address_and_port = try net.Address.resolveIp(address, 6379);
-
-    var listener = try address_and_port.listen(.{
+    var listener = try socket.listen(.{
         .reuse_address = true,
+        .force_nonblocking = true,
     });
+
     defer listener.deinit();
     while (true) {
         const connection = try listener.accept();
